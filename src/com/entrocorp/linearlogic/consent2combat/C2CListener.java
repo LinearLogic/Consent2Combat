@@ -30,6 +30,8 @@ public class C2CListener implements Listener {
         if (!(event.getRightClicked() instanceof Player))
             return;
         Player clicker = event.getPlayer(), clicked = (Player) event.getRightClicked();
+        if (duelers.contains(getAlphabetizedPair(clicker, clicked)))
+            return;
         if (pending.containsKey(clicker)) {
             HashSet<Player> requesters = pending.get(clicker);
             if (requesters.remove(clicked)) { // Handshake complete
