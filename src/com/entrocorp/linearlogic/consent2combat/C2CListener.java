@@ -12,6 +12,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 
 public class C2CListener implements Listener {
 
@@ -58,12 +60,19 @@ public class C2CListener implements Listener {
             return;
         Player attacker = (Player) event.getDamager(), defender = (Player) event.getEntity();
         Pair<Player, Player> duelerPair = getAlphabetizedPair(attacker, defender);
-        if (!duelers.contains(duelerPair)) {
+        if (!duelers.contains(duelerPair))
             event.setCancelled(true);
-            return;
-        }
-        if (defender.getHealth() - event.getDamage() <= 0.0 && plugin.cancelDuelsOnDeath())
-            clearDuels(defender);
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        clearDuels(event.getPlayer());
+    }
+
+    @EventHandler
+    public void onRespawn(PlayerRespawnEvent event) {
+        if (plugin.cancelDuelsOnDeath())
+            clearDuels(event.getPlayer());
     }
 
     private void clearDuels(Player player) {
@@ -71,6 +80,7 @@ public class C2CListener implements Listener {
         for (Pair<Player, Player> pair : duelers)
             if (player == pair.getX() || player == pair.getY())
                 matches.add(pair);
+        duelers.removeAll(matches);
         pending.remove(player);
         for (HashSet<Player> requesters : pending.values())
             requesters.remove(player);
