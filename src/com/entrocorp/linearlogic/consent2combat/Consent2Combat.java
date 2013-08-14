@@ -8,12 +8,21 @@ public class Consent2Combat extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        getLogger().info("Loading: config");
+        saveDefaultConfig();
+        reloadConfig();
         getLogger().info("Enabled. En garde!");
     }
 
     @Override
     public void onDisable() {
+        saveConfig();
+    }
 
+    @Override
+    public void reloadConfig() {
+        super.reloadConfig();
+        verbose = getConfig().getBoolean("verbose");
     }
 
     public boolean isVerbose() {
