@@ -1,4 +1,12 @@
 name: Consent2Combat
 main: com.entrocorp.linearlogic.consent2combat.Consent2Combat
-version: 0.1
+version: 1.0.1
 author: LinearLogic
+commands:
+    c2c:
+        description: Root command
+        usage: /c2c [reload]
+permissions:
+    consent2combat.reload:
+        description: Permission to reload the config with '/c2c reload'
+        default: op
