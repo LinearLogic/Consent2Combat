@@ -11,6 +11,8 @@ public class Consent2Combat extends JavaPlugin {
         getLogger().info("Loading: config");
         saveDefaultConfig();
         reloadConfig();
+        getLogger().info("Loading: listener");
+        getServer().getPluginManager().registerEvents(new C2CListener(this), this);
         getLogger().info("Enabled. En garde!");
     }
 
