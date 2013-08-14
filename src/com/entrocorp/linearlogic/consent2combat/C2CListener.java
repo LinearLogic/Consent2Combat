@@ -54,8 +54,24 @@ public class C2CListener implements Listener {
     public void onPvP(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player) || !(event.getEntity() instanceof Player))
             return;
-        if (!duelers.contains(getAlphabetizedPair((Player) event.getDamager(), (Player) event.getEntity())))
+        Player attacker = (Player) event.getDamager(), defender = (Player) event.getEntity();
+        Pair<Player, Player> duelerPair = getAlphabetizedPair(attacker, defender);
+        if (!duelers.contains(duelerPair)) {
             event.setCancelled(true);
+            return;
+        }
+        if (defender.getHealth() - event.getDamage() <= 0.0 && plugin.cancelDuelsOnDeath())
+            clearDuels(defender);
+    }
+
+    private void clearDuels(Player player) {
+        List<Pair<Player, Player>> matches = new ArrayList<Pair<Player, Player>>();
+        for (Pair<Player, Player> pair : duelers)
+            if (player == pair.getX() || player == pair.getY())
+                matches.add(pair);
+        pending.remove(player);
+        for (HashSet<Player> requesters : pending.values())
+            requesters.remove(player);
     }
 
     private Pair<Player, Player> getAlphabetizedPair(Player p1, Player p2) {
