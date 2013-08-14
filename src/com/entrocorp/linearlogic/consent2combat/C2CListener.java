@@ -8,7 +8,9 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 public class C2CListener implements Listener {
@@ -46,6 +48,14 @@ public class C2CListener implements Listener {
         if (pending.get(clicked).add(clicker))
             clicked.sendMessage(plugin.getPrefix() + ChatColor.RED + clicker.getName() + ChatColor.GRAY + " wants to duel. " +
                     "Right-click the player to accept.");
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onPvP(EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof Player) || !(event.getEntity() instanceof Player))
+            return;
+        if (!duelers.contains(getAlphabetizedPair((Player) event.getDamager(), (Player) event.getEntity())))
+            event.setCancelled(true);
     }
 
     private Pair<Player, Player> getAlphabetizedPair(Player p1, Player p2) {
