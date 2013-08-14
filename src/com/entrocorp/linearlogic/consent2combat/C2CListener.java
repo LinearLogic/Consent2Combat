@@ -27,24 +27,24 @@ public class C2CListener implements Listener {
     public void onHandshake(PlayerInteractEntityEvent event) {
         if (!(event.getRightClicked() instanceof Player))
             return;
-        Player clicked = (Player) event.getRightClicked();
-        if (pending.containsKey(event.getPlayer())) {
-            HashSet<Player> requesters = pending.get(event.getPlayer());
+        Player clicker = event.getPlayer(), clicked = (Player) event.getRightClicked();
+        if (pending.containsKey(clicker)) {
+            HashSet<Player> requesters = pending.get(clicker);
             if (requesters.remove(clicked)) { // Handshake complete
-                duelers.add(getAlphabetizedPair(event.getPlayer(), clicked));
-                event.getPlayer().sendMessage("You are now dueling with " + ChatColor.RED + clicked.getName() + "!");
-                clicked.sendMessage("You are now dueling with " + ChatColor.RED + event.getPlayer().getName() + "!");
+                duelers.add(getAlphabetizedPair(clicker, clicked));
+                clicker.sendMessage(plugin.getPrefix() + "You are now dueling with " + ChatColor.RED + clicked.getName() + "!");
+                clicked.sendMessage(plugin.getPrefix() + "You are now dueling with " + ChatColor.RED + clicker.getName() + "!");
                 if (plugin.isVerbose())
-                    plugin.getLogger().info(event.getPlayer().getName() + " is now dueling with " + clicked.getName());
+                    plugin.getLogger().info(clicker.getName() + " is now dueling with " + clicked.getName());
                 if (requesters.size() == 0)
-                    pending.remove(event.getPlayer());
+                    pending.remove(clicker);
                 return;
             }
         }
         if (!pending.containsKey(clicked))
             pending.put(clicked, new HashSet<Player>());
-        if (pending.get(clicked).add(event.getPlayer()))
-            clicked.sendMessage(ChatColor.RED + event.getPlayer().getName() + ChatColor.GRAY + " wants to duel. " +
+        if (pending.get(clicked).add(clicker))
+            clicked.sendMessage(plugin.getPrefix() + ChatColor.RED + clicker.getName() + ChatColor.GRAY + " wants to duel. " +
                     "Right-click the player to accept.");
     }
 
